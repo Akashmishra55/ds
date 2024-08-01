@@ -108,3 +108,102 @@ weighted.mean <- function(pay_rates, sample_sizes) {
  d <- rowSums(c) / rowSums(b)
  round(d, 2)
 }
+
+
+1.Analyze employee turnover rates and identify factors contributing to attrition.
+install.packages("tidyverse")
+install.packages("Information")
+install.packages("caret")
+# Load the essential libraries
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(lubridate, warn.conflicts = FALSE)
+library(Information)
+library(caret)
+#load the dataset
+org <- read_csv("org.csv")
+# Check the structure of the org dataset
+glimpse(org)
+org %>%
+ count(status)
+# Calculate the overall turnover rate
+org %>%
+ summarize(avg_turnover_rate = mean(turnover))
+# Differentiate turnover by the employee level
+df_level <- org %>%
+ group_by(level) %>%
+ summarize(turnover_level = mean(turnover))
+# Check the results
+df_level
+# Visualize turnover by employee level
+ggplot(df_level, aes(x = level, y = turnover_level)) + geom_col()
+Differentiate turnover by office location
+df_location <- org %>%
+ group_by(location) %>%
+ summarize(turnover_location = mean(turnover))
+# Check the results
+df_location
+# Visualize turnover by office location
+ggplot(df_location, aes(x = location, y = turnover_location)) + geom_col()
+survey <- read_csv("survey.csv")
+# View the structure of the survey dataset
+glimpse(survey)
+# Join survey to the org3 dataset
+org_final <- left_join(org3, survey, by = "mgr_id")
+# Visualize and compare manager effectiveness scores
+ggplot(org_final, aes(x = status, y = mgr_effectiveness)) + geom_boxplot()
+
+
+2. Develop a user friendly HRIS dashboard to monitoring and anlyzing HR matrics. 
+: library(dplyr)
+library(ggplot2)
+library(lubridate)
+# Load the dataset
+data <- read.csv("HR_Analytics.csv")
+head(data)
+# Check for missing values
+sum(is.na(data))
+# Ensure there are no missing values
+if (sum(is.na(data)) > 0) {
+ data <- na.omit(data)
+}
+# Gender distribution pie chart
+gender_distribution <- data %>%
+ group_by(Gender) %>%
+ summarise(Count = n()) %>%
+ mutate(Percentage = round(Count / sum(Count) * 100, 1))
+# Plot
+ggplot(gender_distribution, aes(x = "", y = Percentage, fill = Gender)) +
+ geom_bar(width = 1, stat = "identity") +
+ coord_polar("y", start = 0) +
+ theme_void() +
+ geom_text(aes(label = paste0(Percentage, "%")), 
+ position = position_stack(vjust = 0.5)) +
+ labs(title = "Gender Distribution of Employees") +
+ scale_fill_brewer(palette = "Set3")
+# Education Level Distribution
+library(ggplot2)
+ggplot(data, aes(x = factor(Education, levels = c(1, 2, 3, 4, 5)), 
+ fill = factor(Education))) +
+ geom_bar() +
+ labs(title = "Distribution of Education Levels",
+ x = "Education Level",
+ y = "Number of Employees",
+ fill = "Education Level") +
+ scale_x_discrete(labels = c("1" = "Below College", "2" = "College", "3" = "Bachelor",
+ "4" = "Master", "5" = "Doctor"))
+# Employee Age Distribution
+ggplot(data, aes(x = Age)) +
+ geom_histogram(binwidth = 5, fill = "green", color = "black") +
+ labs(title = "Age Distribution of Employees",
+ x = "Age",
+ y = "Count")
+# Job Role Distribution
+ggplot(data, aes(x = JobRole, fill = JobRole)) +
+ geom_bar() +
+ labs(title = "Distribution of Job Roles",
+ x = "Job Role",
+ y = "Count") +
+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
