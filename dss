@@ -1,743 +1,377 @@
-#pratical 1 web scraping
-import requests
-from bs4 import BeautifulSoup
+pra1:-Pre-processiang methods 
+for text data (tokenization, stop-words etc…)
+# Example text data
+text_data = [
+    "Natural Language Processing is amazing!",
+    "Preprocessing includes tokenization, removing stop-words, and more.",
+    "Text preprocessing prepares raw text for machine learning."
+]
+import nltk
+from nltk.tokenize import word_tokenize
+
+# Download necessary NLTK data
+nltk.download('punkt')
+
+# Tokenizing the text
+tokens = [word_tokenize(sentence) for sentence in text_data]
+print(tokens)
+tokens_lowercase = [[word.lower() for word in token_list] for token_list in tokens]
+print(tokens_lowercase)
+import string
+
+tokens_no_punctuation = [
+    [word for word in token_list if word not in string.punctuation]
+    for token_list in tokens_lowercase
+]
+print(tokens_no_punctuation)
+from nltk.corpus import stopwords
+
+# Download NLTK stopwords
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
+
+tokens_no_stopwords = [
+    [word for word in token_list if word not in stop_words]
+    for token_list in tokens_no_punctuation
+]
+print(tokens_no_stopwords)
+from nltk.stem import PorterStemmer
+
+stemmer = PorterStemmer()
+tokens_stemmed = [
+    [stemmer.stem(word) for word in token_list]
+    for token_list in tokens_no_stopwords
+]
+print(tokens_stemmed)
+from nltk.stem import WordNetLemmatizer
+
+# Download WordNet data
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+lemmatizer = WordNetLemmatizer()
+tokens_lemmatized = [
+    [lemmatizer.lemmatize(word) for word in token_list]
+    for token_list in tokens_no_stopwords
+]
+print(tokens_lemmatized)
+from sklearn.feature_extraction.text import CountVectorizer
+
+vectorizer = CountVectorizer()
+bow = vectorizer.fit_transform(text_data)
+print(bow.toarray())
+print(vectorizer.get_feature_names_out())
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf_vectorizer = TfidfVectorizer()
+tfidf = tfidf_vectorizer.fit_transform(text_data)
+print(tfidf.toarray())
+print(tfidf_vectorizer.get_feature_names_out())
+
+
+@@@@PRticla2:Implement Stemming
+
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+import nltk
+
+# Download necessary data
+nltk.download('punkt')
+
+# Sample text data
+text_data = [
+    "I am enjoying programming and learning Python.",
+    "Programmers love solving problems and debugging codes.",
+    "Stemming helps in reducing words to their base form."
+]
+
+# Initialize the PorterStemmer
+stemmer = PorterStemmer()
+
+# Tokenize and stem
+for sentence in text_data:
+    print(f"Original Sentence: {sentence}")
+    tokens = word_tokenize(sentence)
+    stemmed_tokens = [stemmer.stem(word) for word in tokens]
+    print(f"Stemmed Tokens: {stemmed_tokens}\n")
+
+
+!!!!pora3:Implement Morphological Analysis
+import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk import pos_tag, word_tokenize
+
+# Download necessary resources
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+# Initialize the lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+# Example text
+text = "The children are playing happily in the playground. She was running faster than anyone else."
+
+# Tokenize and POS tagging
+tokens = word_tokenize(text)
+pos_tags = pos_tag(tokens)
+
+# Perform lemmatization with part-of-speech
+for word, pos in pos_tags:
+    lemma = lemmatizer.lemmatize(word.lower())
+    print(f"Word: {word}, POS: {pos}, Lemma: {lemma}")
+
+
+&&&prat4:Implement N-gram Model
+
+# Function to generate N-grams
+def generate_ngrams(text, n):
+    tokens = text.split()  # Tokenize the text
+    ngrams = [tuple(tokens[i:i + n]) for i in range(len(tokens) - n + 1)]
+    return ngrams
+
+# Example text
+text = "Natural language processing is amazing."
+
+# Generate bi-grams (N = 2)
+bigrams = generate_ngrams(text, 2)
+print("Bi-grams:", bigrams)
+
+# Generate tri-grams (N = 3)
+trigrams = generate_ngrams(text, 3)
+print("Tri-grams:", trigrams)
+
+
+####pra5:Implement Part-of-Speech tagging
+import nltk
+
+# Download required NLTK data files
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+# Example text
+text = "Natural Language Processing is an amazing field of study."
+
+# Tokenize the text into words
+tokens = nltk.word_tokenize(text)
+
+# Perform POS tagging
+pos_tags = nltk.pos_tag(tokens)
+
+# Display the results
+print("Word and POS Tag:")
+for word, tag in pos_tags:
+    print(f"{word}: {tag}")
+
+
+&&&pta6:Implement Chucking
+
+import nltk
+
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+# Example text
+text = "The quick brown fox jumps over the lazy dog."
+
+# Tokenize and tag the text
+tokens = nltk.word_tokenize(text)
+pos_tags = nltk.pos_tag(tokens)
+
+# Define a chunk grammar
+# This example captures noun phrases (NP) using POS tags (e.g., DT + JJ + NN)
+chunk_grammar = r"""
+  NP: {<DT>?<JJ>*<NN>}   # NP: Determiner (optional), Adjective(s), and Noun
+"""
+
+# Create a chunk parser
+chunk_parser = nltk.RegexpParser(chunk_grammar)
+
+# Parse the tagged text
+chunk_tree = chunk_parser.parse(pos_tags)
+
+# Display the chunk tree
+print(chunk_tree)
+chunk_tree.draw()  # Opens a graphical display of the tree (if supported)
+
+
+$$$pra7:-mplement Text Summarization
+
+# Install necessary library
+# pip install transformers
+
+from transformers import pipeline
+
+# Load a pre-trained summarization pipeline
+summarizer = pipeline("summarization")
+
+# Example text
+text = """
+Natural Language Processing (NLP) is a fascinating field of Artificial Intelligence (AI) 
+that enables computers to understand and interpret human language. Applications of NLP include 
+sentiment analysis, machine translation, chatbots, and more. By leveraging techniques like text summarization, 
+NLP systems can distill vast amounts of information into concise summaries, making it easier for users to process and understand data.
+"""
+
+# Summarize the text
+summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
+print("Abstractive Summary:")
+print(summary[0]['summary_text'])
+
+
+****prat8:-Implement Named Entity Recognition
+
+import spacy
+
+# Load the spaCy English language model
+nlp = spacy.load("en_core_web_sm")
+
+# Example text
+text = """
+Elon Musk, the CEO of SpaceX and Tesla, announced the launch of the Starship rocket from Boca Chica, Texas, 
+on February 10, 2025. The launch is expected to revolutionize space travel.
+"""
+
+# Process the text using spaCy
+doc = nlp(text)
+
+# Extract named entities
+print("Named Entities and Their Categories:")
+for ent in doc.ents:
+    print(f"{ent.text} ({ent.label_})")
+
+# Explanation of entities
+print("\nEntity Labels and Their Meanings:")
+print(spacy.explain("ORG"))  # Example
+print(spacy.explain("DATE"))  # Example
+
+
+
+^^^^pra9:-Implement Sentiment Analysis 
+
+from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+
+# Download the SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
+
+# Initialize the sentiment analyzer
+sia = SentimentIntensityAnalyzer()
+
+# Example text
+texts = [
+    "I love this product! It's amazing and works perfectly.",
+    "This is the worst experience I've ever had.",
+    "The product is okay, but it could be better.",
+]
+
+# Analyze sentiment for each text
+for text in texts:
+    scores = sia.polarity_scores(text)
+    print(f"Text: {text}")
+    print(f"Sentiment Scores: {scores}")
+    if scores['compound'] > 0:
+        print("Overall Sentiment: Positive")
+    elif scores['compound'] < 0:
+        print("Overall Sentiment: Negative")
+    else:
+        print("Overall Sentiment: Neutral")
+    print("-" * 50)
+
+
+()($$pra10:-Implement One real time NLP Application on a dataset available
+
+pip install wordcloud
 import pandas as pd
-2
-Akash mishra 1303022
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-# Step 1: Web Scraping with BeautifulSoup
-def scrape_weather_data():
- url = "https://mausam.imd.gov.in/" # Replace with a real website
- response = requests.get(url)
- if response.status_code == 200:
- soup = BeautifulSoup(response.content, "html.parser")
- weather_data = []
- rows = soup.find_all('tr') # Assuming data is in a table
- for row in rows:
- cols = row.find_all('td')
- if cols:
- weather_data.append([col.text.strip() for col in cols])
- columns = ['Date', 'Temperature', 'Rainfall'] # Update column names as 
-needed
- weather_df = pd.DataFrame(weather_data, columns=columns)
- return weather_df
- else:
- print("Failed to retrieve weather data.")
- return pd.DataFrame()
-# Example: Simulated scraping for soil data
-def scrape_soil_data():
-3
-Akash mishra 1303022
- soil_data = {
- 'Region': ['North', 'South', 'East', 'West'],
- 'pH': [6.5, 5.8, 7.0, 6.2],
- 'Organic Matter': [3.2, 2.8, 3.5, 3.0],
- }
- return pd.DataFrame(soil_data)
-# Example: Simulated crop yield data
-def simulate_crop_yield_data():
- crop_yield_data = {
- 'Year': [2018, 2019, 2020, 2021, 2022],
- 'Crop': ['Wheat', 'Rice', 'Maize', 'Soybean', 'Barley'],
- 'Yield': [3200, 4500, 2800, 2200, 3100],
- 'Region': ['North', 'South', 'East', 'West', 'North']
- }
- return pd.DataFrame(crop_yield_data) # Step 2: Cleaning and Preprocessing 
-Data
-def clean_and_preprocess(df):
- print("\nOriginal Data:\n", df.head())
- df.fillna(df.mean(numeric_only=True), inplace=True)
- df.drop_duplicates(inplace=True)
- for col in df.select_dtypes(include=['float', 'int']).columns:
- df[col] = (df[col] - df[col].mean()) / df[col].std()
- return df# Step 3: Exploratory Data Analysis (EDA)
-def exploratory_analysis(crop_yield_df):
-4
-Akash mishra 1303022
- print("\nSummary Statistics:\n", crop_yield_df.describe())
- plt.figure(figsize=(10, 6))
- sns.barplot(x='Year', y='Yield', data=crop_yield_df, hue='Crop')
- plt.title("Crop Yield Over the Years")
- plt.xlabel("Year")
- plt.ylabel("Yield")
- plt.legend(title="Crop")
- plt.show()
- 
- numeric_cols = crop_yield_df.select_dtypes(include=['float', 'int']).columns
- plt.figure(figsize=(8, 6))
- sns.heatmap(crop_yield_df[numeric_cols].corr(), annot=True, 
-cmap="coolwarm")
- plt.title("Correlation Heatmap")
- plt.show()def get_weather(city):
- API_KEY = 'c5d49a73df9a6f67e900883043ef1edd' # Your API key from 
-WeatherStack
- BASE_URL = 'http://api.weatherstack.com/current'
- params = {'access_key': API_KEY, 'query': city}
- response = requests.get(BASE_URL, params=params)
- if response.status_code == 200:
- data = response.json() # Parse the response to JSON
- if 'current' in data:
- temperature = data['current']['temperature']
- weather_descriptions = data['current']['weather_descriptions'][0]
-5
-Akash mishra 1303022
- humidity = data['current']['humidity']
- wind_speed = data['current']['wind_speed']
- print(f"Weather in {city}:")
- print(f"Temperature: {temperature}°C")
- print(f"Condition: {weather_descriptions}")
- print(f"Humidity: {humidity}%")
- print(f"Wind Speed: {wind_speed} km/h")
- else:
- print(f"Error: Could not retrieve weather data for {city}.")
- else:
- print(f"Error: Unable to connect to WeatherStack API. Status code: 
-{response.status_code}")if __name__ == "__main__":
- # Scrape data
- weather_data = scrape_weather_data()
- soil_data = scrape_soil_data()
- crop_yield_data = simulate_crop_yield_data()
- 
- # Clean and preprocess data
- print("\n--- Cleaning Weather Data ---")
- cleaned_weather_data = clean_and_preprocess(weather_data)
- 
- print("\n--- Cleaning Soil Data ---")
- cleaned_soil_data = clean_and_preprocess(soil_data)
- 
- print("\n--- Cleaning Crop Yield Data ---")
- cleaned_crop_yield_data = clean_and_preprocess(crop_yield_data)
- 
- # Perform EDA on crop yield data
- print("\n--- Exploratory Analysis of Crop Yield Data ---")
- exploratory_analysis(cleaned_crop_yield_data)
- 
- # Example usage: Get weather for New York
- city = 'Delhi, IN'
- get_weather(city)
-
-
-###pratical 2:-weather prediction for time series Analysis
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import LSTM, Dense
-# Load dataset
-data = pd.read_csv('historical_weather_data.csv', parse_dates=['date'], index_col='date')
-temperature = data['temperature'].values.reshape(-1, 1)
-# Normalize data
-scaler = MinMaxScaler(feature_range=(0, 1))
-temperature_scaled = scaler.fit_transform(temperature)
-# Prepare data for LSTM
-sequence_length = 60
-X, y = [], []
-for i in range(len(temperature_scaled) - sequence_length):
-    X.append(temperature_scaled[i:i + sequence_length])
-    y.append(temperature_scaled[i + sequence_length])
-X, y = np.array(X), np.array(y)
-# Split into train and test sets
-train_size = int(0.8 * len(X))
-X_train, X_test = X[:train_size], X[train_size:]
-y_train, y_test = y[:train_size], y[train_size:]
-# Build LSTM model
-model = Sequential([
-    LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
-    LSTM(50, return_sequences=False),
-    Dense(25),
-    Dense(1)
-])
-
-model.compile(optimizer='adam', loss='mean_squared_error')
-model.fit(X_train, y_train, batch_size=32, epochs=20, validation_data=(X_test, y_test))
-
-# Predict
-predictions = model.predict(X_test)
-predictions = scaler.inverse_transform(predictions)
-
-# Plot results
-plt.plot(data.index[-len(y_test):], scaler.inverse_transform(y_test.reshape(-1, 1)), label="Actual")
-plt.plot(data.index[-len(predictions):], predictions, label="Predicted")
-plt.legend()
-plt.title("Weather Prediction Using LSTM")
+from collections import Counter 
+import matplotlib.pyplot as plt 
+from wordcloud import WordCloud
+# Load the CSV file (replace 'your_file.csv' with the actual 
+filename)
+df = pd.read_csv('C:/Users/mera/Downloads/TestLarge.csv')
+# Ensure the required columns are present
+if 'Review' not in df.columns or 'Sentiment' not in 
+df.columns:
+raise ValueError("Columns 'review' or 'sentiment' not 
+found in the CSV. Please check your file.")
+# --- 1. Sentiment Distribution ---
+sentiment_counts = df['Sentiment'].value_counts()
+47
+print("Sentiment Distribution:") 
+print(sentiment_counts)
+# Plot Sentiment Distribution
+sentiment_counts.plot(kind='bar', color=['green', 'red', 
+'blue'])
+plt.title('Sentiment Distribution') 
+plt.xlabel('Sentiment') 
+plt.ylabel('Count') 
+plt.xticks(rotation=0)
 plt.show()
-
-
-@@PRatical 3:Write Crop Yield Prediction Using Machine Learning
-
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
-
-# Load the dataset (replace 'crop_yield_data.csv' with your dataset file)
-data = pd.read_csv('crop_yield_data.csv')
-
-# Display the first few rows of the dataset
-print(data.head())
-
-# Separate features and target variable
-target_column = 'yield'  # Replace with your actual target column name
-features = data.drop(columns=[target_column])
-target = data[target_column]
-
-# Handle categorical features
-categorical_columns = features.select_dtypes(include=['object']).columns
-numerical_columns = features.select_dtypes(include=['int64', 'float64']).columns
-
-encoder = OneHotEncoder(sparse_output=False)
-categorical_encoded = encoder.fit_transform(features[categorical_columns])
-
-# Scale numerical features
-scaler = StandardScaler()
-numerical_scaled = scaler.fit_transform(features[numerical_columns])
-
-# Combine encoded categorical and scaled numerical features
-X = np.hstack((numerical_scaled, categorical_encoded))
-y = target
-
-# Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Train a machine learning model
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
-
-# Make predictions
-y_pred = model.predict(X_test)
-
-# Evaluate the model
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-
-print(f"Mean Squared Error: {mse}")
-print(f"R-squared: {r2}")
-
-# Save the model for future use
-import joblib
-joblib.dump(model, 'crop_yield_model.pkl')
-
-# Save the encoder and scaler
-joblib.dump(encoder, 'encoder.pkl')
-joblib.dump(scaler, 'scaler.pkl')
-
-
-$$$pratical4:Analyzing Satellite Images for Crop Health Monitoring: Use 
-satellite imagery to assess crop health and identify areas 
-needing attention. Tools: QGIS, Python, OpenCV
-pip install rasterio
-
-import numpy as np
-import rasterio
-import matplotlib.pyplot as plt
-from rasterio.plot import show
-from rasterio.enums import Resampling
-
-def calculate_ndvi(nir_band, red_band):
-    """
-    Calculate the Normalized Difference Vegetation Index (NDVI).
-    NDVI = (NIR - Red) / (NIR + Red)
-
-    Parameters:
-        nir_band (numpy.ndarray): Near-infrared band.
-        red_band (numpy.ndarray): Red band.
-
-    Returns:
-        numpy.ndarray: NDVI values.
-    """
-    ndvi = (nir_band - red_band) / (nir_band + red_band + 1e-10)  # Avoid division by zero
-    return ndvi
-
-def rescale_array(array, min_value=0, max_value=255):
-    """
-    Rescale an array to a specified range (default 0-255).
-
-    Parameters:
-        array (numpy.ndarray): Input array.
-        min_value (int): Minimum value of the scaled array.
-        max_value (int): Maximum value of the scaled array.
-
-    Returns:
-        numpy.ndarray: Rescaled array.
-    """
-    scaled = (array - np.min(array)) / (np.max(array) - np.min(array)) * (max_value - min_value) + min_value
-    return scaled.astype(np.uint8)
-
-def visualize_ndvi(ndvi):
-    """
-    Visualize the NDVI values using a colormap.
-
-    Parameters:
-        ndvi (numpy.ndarray): NDVI values.
-    """
-    plt.figure(figsize=(10, 6))
-    plt.imshow(ndvi, cmap='RdYlGn')  # Green for healthy vegetation, red for unhealthy
-    plt.colorbar(label='NDVI')
-    plt.title('NDVI Visualization')
-    plt.xlabel('Pixel X-coordinate')
-    plt.ylabel('Pixel Y-coordinate')
-    plt.show()
-
-def process_satellite_image(image_path, nir_band_index, red_band_index):
-    """
-    Process a satellite image to compute and visualize NDVI.
-
-    Parameters:
-        image_path (str): Path to the satellite image file.
-        nir_band_index (int): Index of the near-infrared band (1-based).
-        red_band_index (int): Index of the red band (1-based).
-    """
-    with rasterio.open(image_path) as src:
-        # Read the required bands
-        nir_band = src.read(nir_band_index, resampling=Resampling.nearest)
-        red_band = src.read(red_band_index, resampling=Resampling.nearest)
-
-        # Calculate NDVI
-        ndvi = calculate_ndvi(nir_band, red_band)
-
-        # Rescale NDVI for visualization
-        ndvi_rescaled = rescale_array(ndvi, min_value=0, max_value=255)
-
-        # Visualize the NDVI
-        visualize_ndvi(ndvi_rescaled)
-
-        # Save NDVI as a GeoTIFF
-        ndvi_meta = src.meta
-        ndvi_meta.update(dtype=rasterio.uint8, count=1)
-
-        output_path = image_path.replace('.tif', '_ndvi.tif')
-        with rasterio.open(output_path, 'w', **ndvi_meta) as dst:
-            dst.write(ndvi_rescaled, 1)
-
-        print(f"NDVI image saved to {output_path}")
-
-# Example usage
-# Replace 'example_image.tif' with the path to your satellite image.
-# Update nir_band_index and red_band_index with the correct band indices.
-#process_satellite_image('LC08_L2SP_144045_20241020_20241029_02_T2_SR_B4.TIF', nir_band_index=1, red_band_index=1)
-process_satellite_image('axcv.tif', nir_band_index=1, red_band_index=2)
-
-
-$%%%pratical5:Land Use Classification Using Remote Sensing Data
-import numpy as np
-from osgeo import gdal
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix
-import matplotlib.pyplot as plt
-
-# Step 1: Read remote sensing data
-def read_raster(file_path):
-    dataset = gdal.Open(file_path)
-    bands = []
-    for i in range(1, dataset.RasterCount + 1):
-        band = dataset.GetRasterBand(i).ReadAsArray()
-        bands.append(band)
-    return np.stack(bands, axis=-1), dataset
-
-# Step 2: Preprocess data
-def preprocess_raster(data):
-    return (data - np.min(data)) / (np.max(data) - np.min(data))  # Normalize
-
-# Step 3: Prepare training data
-def create_training_data(features, labels, sample_size=1000):
-    rows, cols, bands = features.shape
-    X = features.reshape(rows * cols, bands)
-    # Take only the first band of labels as the class labels
-    y = labels[:,:,0].reshape(-1) # This line is changed to select only the first band of the labels
-    mask = ~np.isnan(y)  # Mask for valid samples
-    X, y = X[mask], y[mask]
-    return train_test_split(X, y, test_size=0.3, random_state=42)
-
-# Step 4: Train ML model
-def train_classifier(X_train, y_train):
-    clf = RandomForestClassifier(n_estimators=50, random_state=42)
-    clf.fit(X_train, y_train)
-    return clf
-
-# Step 5: Classify raster
-def classify_raster(model, features):
-    rows, cols, bands = features.shape
-    X = features.reshape(rows * cols, bands)
-    predictions = model.predict(X)
-    return predictions.reshape(rows, cols)
-
-# Main Workflow
-raster_path = 'axcv.tif'
-label_path = 'Labelaxcv.tif'
-
-# Read and preprocess data
-raster_data, raster_ds = read_raster(raster_path)
-preprocessed_data = preprocess_raster(raster_data)
-
-# Read labels
-labels, _ = read_raster(label_path)
-
-# Prepare training data
-X_train, X_test, y_train, y_test = create_training_data(preprocessed_data, labels)
-X_train
-# Train model
-model = train_classifier(X_train, y_train)
-
-# Classify the raster
-classified_map = classify_raster(model, preprocessed_data)
-
-# Save the classified map
-output_path = 'classified_map.tif'
-driver = gdal.GetDriverByName('GTiff')
-output_ds = driver.Create(output_path, raster_ds.RasterXSize, raster_ds.RasterYSize, 1, gdal.GDT_Byte)
-output_ds.GetRasterBand(1).WriteArray(classified_map)
-output_ds.FlushCache()
-
-# Validation
-y_pred = model.predict(X_test)
-print(classification_report(y_test, y_pred))
-print(confusion_matrix(y_test, y_pred))
-
-# Visualization
-plt.imshow(classified_map, cmap='tab10')
-plt.colorbar()
+# --- 2. Word Frequency Analysis by Sentiment ---
+# Function to clean and tokenize text
+def clean_text(text): 
+text = text.lower() 
+words = text.split() 
+return words
+# Separate reviews by sentiment
+positive_reviews = df[df['Sentiment'] == 'Positive']['Review'] 
+negative_reviews = df[df['Sentiment'] == 'Negative']['Review'] 
+neutral_reviews = df[df['Sentiment'] == 'Neutral']['Review']
+# Combine all reviews by sentiment
+positive_words = sum(positive_reviews.apply(clean_text), []) 
+negative_words = sum(negative_reviews.apply(clean_text), []) 
+neutral_words = sum(neutral_reviews.apply(clean_text), [])
+# Get word frequency counts 
+positive_word_counts = Counter(positive_words)
+48
+negative_word_counts = Counter(negative_words) 
+neutral_word_counts = Counter(neutral_words)
+# Display most common words for each sentiment 
+print("\nMost Common Words in Positive Sentiments:") 
+print(positive_word_counts.most_common(10))
+print("\nMost Common Words in Negative Sentiments:") 
+print(negative_word_counts.most_common(10))
+print("\nMost Common Words in Neutral Sentiments:") 
+print(neutral_word_counts.most_common(10))
+# --- 3. Word Cloud for Positive Sentiment ---
+positive_wordcloud = WordCloud(width=800, height=400, 
+background_color='white').generate_from_frequencies(positive_w 
+ord_counts)
+plt.figure(figsize=(8, 8)) 
+plt.imshow(positive_wordcloud, interpolation='bilinear') 
+plt.title('Word Cloud for Positive Sentiment') 
+plt.axis('off')
 plt.show()
-
-
-!!!!!pra6:-Soil Moisture Prediction Using Sensor Data:
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Step 1: Load Data
-# Replace 'data.csv' with the path to your dataset
-data = pd.read_csv('data.csv')
-
-# Inspect the data
-print(data.head())
-
-# Step 2: Preprocess Data
-# Assuming columns are: ['temperature', 'humidity', 'light', 'soil_moisture', 'soil_type']
-# Encode categorical data if necessary
-if 'soil_type' in data.columns:
-    data = pd.get_dummies(data, columns=['soil_type'], drop_first=True)
-
-# Handle missing values
-data = data.dropna()
-
-# Define features (X) and target (y)
-X = data.drop(columns=['soil_moisture'])
-y = data['soil_moisture']
-
-# Step 3: Split Data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Step 4: Train Model
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
-
-# Step 5: Evaluate Model
-y_pred = model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-print(f"Mean Squared Error: {mse}")
-
-# Feature Importance
-importance = model.feature_importances_
-features = X.columns
-importance_df = pd.DataFrame({'Feature': features, 'Importance': importance})
-importance_df = importance_df.sort_values(by='Importance', ascending=False)
-
-# Plot Feature Importance
-plt.figure(figsize=(10, 6))
-sns.barplot(x='Importance', y='Feature', data=importance_df)
-plt.title('Feature Importance')
+# --- 4. Word Cloud for Negative Sentiment ---
+negative_wordcloud = WordCloud(width=800, height=400, 
+background_color='white').generate_from_frequencies(negative_w 
+ord_counts)
+plt.figure(figsize=(8, 8)) 
+plt.imshow(negative_wordcloud, interpolation='bilinear') 
+plt.title('Word Cloud for Negative Sentiment') 
+plt.axis('off')
 plt.show()
-
-# Step 6: Predict Soil Moisture for New Data
-# Replace with new sensor data as a dictionary
-new_data = {
-    'temperature': [25],
-    'humidity': [50],
-    'light': [200],
-    # Add soil_type dummy variables if applicable
-}
-
-# Convert to DataFrame
-new_data_df = pd.DataFrame(new_data)
-
-# Ensure columns match training data
-missing_cols = set(X.columns) - set(new_data_df.columns)
-for col in missing_cols:
-    new_data_df[col] = 0
-
-new_data_df = new_data_df[X.columns]
-
-# Predict
-new_prediction = model.predict(new_data_df)
-print(f"Predicted Soil Moisture: {new_prediction[0]}")
-
-##!!pra7:-Optimizing Irrigation Systems Using Data Analytics: Analyze 
-irrigation data to optimize water usage and improve crop yield.
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Step 1: Load Data
-# Replace 'irrigation_data.csv' with your dataset file path
-data = pd.read_csv('irrigation_data.csv')
-
-# Inspect the data
-print(data.head())
-
-# Step 2: Data Preprocessing
-# Assume columns are ['temperature', 'humidity', 'soil_moisture', 'water_used', 'yield']
-data = data.dropna()
-
-# Feature Engineering: Add derived metrics if needed
-data['water_efficiency'] = data['yield'] / data['water_used']
-
-# Define features (X) and target (y)
-X = data[['temperature', 'humidity', 'soil_moisture', 'water_used']]
-y = data['yield']
-
-# Step 3: Split Data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Step 4: Train Model
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
-
-# Step 5: Evaluate Model
-y_pred = model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-print(f"Mean Squared Error: {mse}")
-
-# Feature Importance
-importance = model.feature_importances_
-features = X.columns
-importance_df = pd.DataFrame({'Feature': features, 'Importance': importance})
-importance_df = importance_df.sort_values(by='Importance', ascending=False)
-
-# Plot Feature Importance
-plt.figure(figsize=(10, 6))
-sns.barplot(x='Importance', y='Feature', data=importance_df)
-plt.title('Feature Importance')
+49
+# --- 5. Optional: Sentiment Over Time (if a timestamp column 
+exists) ---
+if 'timestamp' in df.columns:
+# Convert timestamp to datetime
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+# Group by sentiment and timestamp 
+sentiment_time_series =
+df.groupby([df['timestamp'].dt.to_period('M'),
+'Sentiment']).size().unstack().fillna(0)
+sentiment_time_series.plot(kind='line', marker='o') 
+plt.title('Sentiment Over Time')
+plt.xlabel('Time (Month-Year)') 
+plt.ylabel('Count') 
+plt.xticks(rotation=45) 
 plt.show()
-
-# Step 6: Optimization Insights
-# Analyze water usage efficiency
-efficiency_summary = data.groupby('water_used').agg({'yield': 'mean', 'water_efficiency': 'mean'}).reset_index()
-
-# Plot Yield vs Water Used
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='water_used', y='yield', data=efficiency_summary, marker='o')
-plt.title('Yield vs Water Used')
-plt.xlabel('Water Used (liters)')
-plt.ylabel('Yield (kg)')
-plt.show()
-
-# Step 7: Predict Optimal Water Usage
-# Create a sample dataset for prediction
-optimal_data = pd.DataFrame({
-    'temperature': [25, 30, 28],
-    'humidity': [50, 60, 55],
-    'soil_moisture': [20, 30, 25],
-    'water_used': [100, 200, 150],
-})
-
-# Predict yields for different water usage scenarios
-predicted_yields = model.predict(optimal_data)
-optimal_data['predicted_yield'] = predicted_yields
-print("Predicted Optimal Water Usage:")
-print(optimal_data)
-
-# Step 8: Save Analysis Results
-# Save predictions to a CSV
-optimal_data.to_csv('optimal_water_usage.csv', index=False)
-print("Optimization results saved to 'optimal_water_usage.csv'")
-
-
-$$$&&pra9:-Creating Yield Maps Using GPS Data: Generate yield maps to 
-visualize spatial variability in crop production.
-import pandas as pd
-import random
-from datetime import datetime, timedelta
-
-# Function to generate random GPS coordinates near a location
-def generate_gps_coords():
-    lat = random.uniform(34.0, 35.0)  # Random latitude between 34.0 and 35.0
-    lon = random.uniform(-118.0, -117.0)  # Random longitude between -118.0 and -117.0
-    return lat, lon
-
-# Function to generate random yield values, speed, and heading
-def generate_random_data():
-    yield_value = random.randint(140, 160)  # Yield between 140 and 160 kg/hectare
-    speed = random.uniform(10, 20)  # Speed between 10 and 20 km/h
-    heading = random.randint(0, 360)  # Heading between 0 and 360 degrees
-    return yield_value, speed, heading
-
-# Create a list to hold the data
-data = []
-
-# Start time for the timestamp
-start_time = datetime(2025, 1, 17, 0, 0, 0)
-
-# Generate 1000 records
-for i in range(1000):
-    timestamp = start_time + timedelta(minutes=i*5)  # Incrementing by 5 minutes
-    latitude, longitude = generate_gps_coords()
-    yield_value, speed, heading = generate_random_data()
-
-    # Append the generated record to the data list
-    data.append([timestamp, latitude, longitude, yield_value, speed, heading])
-
-# Create a pandas DataFrame
-df = pd.DataFrame(data, columns=['Timestamp', 'Latitude', 'Longitude', 'Yield', 'Speed', 'Heading'])
-
-# Save the DataFrame to a CSV file
-df.to_csv('gps_yield_data.csv', index=False)
-
-print("CSV file generated successfully!")
-
-import pandas as pd
-import numpy as np
-import geopandas as gpd
-import matplotlib.pyplot as plt
-from shapely.geometry import Point
-
-# Step 1: Load the Data
-data_path = 'gps_yield_data.csv'  # Replace with your dataset path
-data = pd.read_csv(data_path)
-
-# Check if required columns exist
-required_columns = {'Latitude', 'Longitude', 'Yield'}
-if not required_columns.issubset(data.columns):
-    raise ValueError(f"The dataset must contain these columns: {required_columns}")
-
-# Step 2: Create GeoDataFrame
-geometry = [Point(xy) for xy in zip(data['Longitude'], data['Latitude'])]
-gdf = gpd.GeoDataFrame(data, geometry=geometry)
-gdf.set_crs(epsg=4326, inplace=True)  # WGS 84 for GPS coordinates
-
-# Step 3: Normalize Yield for Color Mapping
-yield_min, yield_max = data['Yield'].min(), data['Yield'].max()
-data['yield_normalized'] = (data['Yield'] - yield_min) / (yield_max - yield_min)
-
-# Step 4: Plot Yield Map
-plt.figure(figsize=(12, 8))
-scatter = plt.scatter(
-    data['Longitude'], data['Latitude'],
-    c=data['yield_normalized'], cmap='viridis', s=50, alpha=0.8, edgecolor='k'
-)
-plt.colorbar(scatter, label='Normalized Yield')
-plt.xlabel('Longitude')
-plt.ylabel('Latitude')
-plt.title('Yield Map: Spatial Variability in Crop Production')
-plt.grid(True)
-plt.show()
-
-# Step 5: Save GeoDataFrame to a Shapefile (Optional)
-output_path = 'yield_map.shp'
-gdf.to_file(output_path)
-print(f"GeoDataFrame saved as '{output_path}'")
-
-
-**&&%%$rpa10:-Price Forecasting for Agricultural Products: Predict market 
-prices for agricultural products using historical price data.
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-
-# Load dataset (replace 'data.csv' with your dataset file)
-data = pd.read_csv('data.csv')
-
-# Assume dataset has columns: 'date', 'price', 'rainfall', 'temperature', 'demand', 'supply'
-data['date'] = pd.to_datetime(data['date'])
-data['year'] = data['date'].dt.year
-data['month'] = data['date'].dt.month
-data['day'] = data['date'].dt.day
-data.drop(columns=['date'], inplace=True)
-
-# Define features and target
-X = data.drop(columns=['price'])
-y = data['price']
-
-# Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Normalize the data
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-# Train the model
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X_train_scaled, y_train)
-
-# Make predictions
-y_pred = model.predict(X_test_scaled)
-
-# Evaluate model performance
-mae = mean_absolute_error(y_test, y_pred)
-mse = mean_squared_error(y_test, y_pred)
-rmse = np.sqrt(mse)
-
-print(f"Mean Absolute Error: {mae}")
-print(f"Mean Squared Error: {mse}")
-print(f"Root Mean Squared Error: {rmse}")
-
-# Plot actual vs predicted prices
-plt.figure(figsize=(10, 5))
-plt.plot(y_test.values, label='Actual Prices', marker='o')
-plt.plot(y_pred, label='Predicted Prices', marker='s')
-plt.xlabel('Sample Index')
-plt.ylabel('Price')
-plt.title('Actual vs Predicted Prices')
-plt.legend()
-plt.show()
-
-import pandas as pd
-import numpy as np
-
-# Set random seed for reproducibility
-np.random.seed(42)
-
-# Generate 500 days of data
-dates = pd.date_range(start='2020-01-01', periods=500, freq='D')
-prices = np.random.uniform(50, 150, size=len(dates))  # Prices between 50 and 150
-rainfall = np.random.uniform(0, 20, size=len(dates))  # Rainfall in mm
-temperature = np.random.uniform(15, 35, size=len(dates))  # Temperature in Celsius
-demand = np.random.uniform(100, 1000, size=len(dates))  # Demand in tons
-supply = np.random.uniform(100, 1000, size=len(dates))  # Supply in tons
-
-# Create DataFrame
-data = pd.DataFrame({
-    'date': dates,
-    'price': prices,
-    'rainfall': rainfall,
-    'temperature': temperature,
-    'demand': demand,
-    'supply': supply
-})
-
-# Save to CSV
-data.to_csv('data.csv', index=False)
-
-print("data.csv has been generated successfully!")
+else:
+print("No timestamp column found for sentiment over time 
+analysis.")
 
 
 
