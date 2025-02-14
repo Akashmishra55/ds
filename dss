@@ -222,8 +222,118 @@ db.collection_name.drop()
 
 ###pratic4:-Mongodb map reduce and filter queries
 
+db.collection_name.mapReduce(
+   function() { /* map function */ },
+   function(key, values) { /* reduce function */ },
+   {
+      out: "output_collection_name", // Output collection
+      query: { /* Optional filter */ },
+      sort: { /* Optional sorting */ },
+      limit: 100 // Optional limit
+   }
+)
+#filter queries with map reduce
+db.documents.mapReduce(
+   function() {
+       // Map function: emit each word as key with a value of 1
+       this.text.split(" ").forEach(word => emit(word, 1));
+   },
+   function(key, values) {
+       // Reduce function: sum up all values for each key
+       return Array.sum(values);
+   },
+   {
+      out: "word_count" // Output collection name
+   }
+)
+
+// View the result
+db.word_count.find()
+db.sales.mapReduce(
+   function() {
+       emit(this.product, this.amount); // Emit product as key and amount as value
+   },
+   function(key, values) {
+       return Array.sum(values); // Sum up the sales for each product
+   },
+   {
+      out: "total_sales"
+   }
+)
+
+// View the result
+db.total_sales.find()
+db.documents.mapReduce(
+   function() {
+       this.text.split(" ").forEach(word => emit(word, 1));
+   },
+   function(key, values) {
+       return Array.sum(values);
+   },
+   {
+      query: { author: "John Doe" }, // Filter documents by author
+      out: "filtered_word_count"
+   }
+)
+
+db.filtered_word_count.find()
 
 
 
+&&&pract5:-hadoop shell command
+# Start Hadoop
+start-dfs.sh
+start-yarn.sh
+
+# Stop Hadoop
+stop-dfs.sh
+stop-yarn.sh# List files and directories in the HDFS root directory
+hdfs dfs -ls /
+
+# List files recursively
+hdfs dfs -ls -R /
+
+# Check disk usage of HDFS directory
+hdfs dfs -du -s /directory_name
+
+# View detailed HDFS disk usage
+hdfs dfs -df -h
+# Create a directory in HDFS
+hdfs dfs -mkdir /directory_name
+# Copy a local file to HDFS
+hdfs dfs -put /local/path/file.txt /hdfs/path/hadoop version
+# Copy a file from HDFS to the local filesystem
+hdfs dfs -get /hdfs/path/file.txt /local/path/
+# Display the contents of a file
+hdfs dfs -cat /hdfs/path/file.txt
+# View the first few lines of a file
+hdfs dfs -tail /hdfs/path/file.txt
+# Delete a file from HDFS
+hdfs dfs -rm /hdfs/path/file.txt
+# Delete a directory and its contents
+hdfs dfs -rm -r /directory_name
 
 
+&&&&pra6:-pig word count and map reduce
+hello world
+hello Hadoop
+hello Pig
+pig
+-- Load the input file into Pig
+input_data = LOAD 'input.txt' USING PigStorage(' ') AS (line:chararray);
+-- Tokenize the lines into words
+words = FOREACH input_data GENERATE (TOKENIZE(line)) AS word;
+-- Group words by their value
+grouped_words = GROUP words BY word;
+
+-- Count the occurrences of each word
+word_count = FOREACH grouped_words GENERATE group AS word, COUNT(words) AS count;
+-- Store the result into an HDFS directory
+STORE word_count INTO 'output' USING PigStorage('\t');
+hdfs dfs -cat output/part-r
+++++pra7:-give table
+input_data = LOAD 'input.txt' USING PigStorage(' ') AS (line:chararray);
+words = FOREACH input_data GENERATE FLATTEN(TOKENIZE(line)) AS word;
+grouped_words = GROUP words BY word;
+word_count = FOREACH grouped_words GENERATE group AS word, COUNT(words) AS count;
+STORE word_count INTO 'output' USING PigStorage('\t');
