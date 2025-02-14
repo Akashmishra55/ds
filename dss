@@ -325,15 +325,35 @@ input_data = LOAD 'input.txt' USING PigStorage(' ') AS (line:chararray);
 words = FOREACH input_data GENERATE (TOKENIZE(line)) AS word;
 -- Group words by their value
 grouped_words = GROUP words BY word;
-
 -- Count the occurrences of each word
 word_count = FOREACH grouped_words GENERATE group AS word, COUNT(words) AS count;
 -- Store the result into an HDFS directory
 STORE word_count INTO 'output' USING PigStorage('\t');
-hdfs dfs -cat output/part-r
-++++pra7:-give table
-input_data = LOAD 'input.txt' USING PigStorage(' ') AS (line:chararray);
-words = FOREACH input_data GENERATE FLATTEN(TOKENIZE(line)) AS word;
-grouped_words = GROUP words BY word;
-word_count = FOREACH grouped_words GENERATE group AS word, COUNT(words) AS count;
-STORE word_count INTO 'output' USING PigStorage('\t');
+hdfs dfs -cat output/part-r-00000
+
+
+++++pra7:-hive table
+start-hbase.sh
+hbase shell
+create 'table_name', 'column_family1', 'column_family2'
+create 'students', 'personal', 'marks'
+list
+describe 'table_name'
+describe 'students'
+put 'table_name', 'row_key', 'column_family:column', 'value'
+put 'students', 'row1', 'personal:name', 'John'
+put 'students', 'row1', 'marks:math', '85'
+get 'table_name', 'row_key'
+get 'students', 'row1'
+scan 'table_name'
+scan 'students'
+delete 'table_name', 'row_key', 'column_family:column'
+delete 'students', 'row1', 'marks:math'
+deleteall 'table_name', 'row_key'
+deleteall 'students', 'row1'
+disable 'students'
+drop 'students'
+# Disable the table first
+disable 'table_name'
+# Drop the table
+drop 'table_name'
