@@ -356,4 +356,26 @@ drop 'students'
 # Disable the table first
 disable 'table_name'
 # Drop the table
-drop 'table_name'
+drop 'table_name'name'
+
+
+!!!! pra8:-hbase
+create 'wordcount', 'counts'
+put 'wordcount', 'word1', 'counts:count', '3'
+put 'wordcount', 'word2', 'counts:count', '5'
+put 'wordcount', 'word3', 'counts:count', '7'
+get 'wordcount', 'word1'
+scan 'wordcount'
+stop-hbase.sh  
+
+
+&&&pratc9:-word wragling with pig
+hello world hello Pig hello Hadoop
+Pig is a big data tool
+Hadoop is powerful
+pig
+-- Load the data from HDFS
+input_data = LOAD 'input.txt' USING PigStorage(' ') AS (line: chararray);
+-- Tokenize each line into words
+words = FOREACH input_data GENERATE FLATTEN(TOKENIZE(line)) AS word;
+
