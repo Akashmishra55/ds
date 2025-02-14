@@ -1,377 +1,228 @@
-pra1:-Pre-processiang methods 
-for text data (tokenization, stop-words etc…)
-# Example text data
-text_data = [
-    "Natural Language Processing is amazing!",
-    "Preprocessing includes tokenization, removing stop-words, and more.",
-    "Text preprocessing prepares raw text for machine learning."
-]
-import nltk
-from nltk.tokenize import word_tokenize
-
-# Download necessary NLTK data
-nltk.download('punkt')
-
-# Tokenizing the text
-tokens = [word_tokenize(sentence) for sentence in text_data]
-print(tokens)
-tokens_lowercase = [[word.lower() for word in token_list] for token_list in tokens]
-print(tokens_lowercase)
-import string
-
-tokens_no_punctuation = [
-    [word for word in token_list if word not in string.punctuation]
-    for token_list in tokens_lowercase
-]
-print(tokens_no_punctuation)
-from nltk.corpus import stopwords
-
-# Download NLTK stopwords
-nltk.download('stopwords')
-stop_words = set(stopwords.words('english'))
-
-tokens_no_stopwords = [
-    [word for word in token_list if word not in stop_words]
-    for token_list in tokens_no_punctuation
-]
-print(tokens_no_stopwords)
-from nltk.stem import PorterStemmer
-
-stemmer = PorterStemmer()
-tokens_stemmed = [
-    [stemmer.stem(word) for word in token_list]
-    for token_list in tokens_no_stopwords
-]
-print(tokens_stemmed)
-from nltk.stem import WordNetLemmatizer
-
-# Download WordNet data
-nltk.download('wordnet')
-nltk.download('omw-1.4')
-
-lemmatizer = WordNetLemmatizer()
-tokens_lemmatized = [
-    [lemmatizer.lemmatize(word) for word in token_list]
-    for token_list in tokens_no_stopwords
-]
-print(tokens_lemmatized)
-from sklearn.feature_extraction.text import CountVectorizer
-
-vectorizer = CountVectorizer()
-bow = vectorizer.fit_transform(text_data)
-print(bow.toarray())
-print(vectorizer.get_feature_names_out())
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-tfidf_vectorizer = TfidfVectorizer()
-tfidf = tfidf_vectorizer.fit_transform(text_data)
-print(tfidf.toarray())
-print(tfidf_vectorizer.get_feature_names_out())
-
-
-@@@@PRticla2:Implement Stemming
-
-from nltk.stem import PorterStemmer
-from nltk.tokenize import word_tokenize
-import nltk
-
-# Download necessary data
-nltk.download('punkt')
-
-# Sample text data
-text_data = [
-    "I am enjoying programming and learning Python.",
-    "Programmers love solving problems and debugging codes.",
-    "Stemming helps in reducing words to their base form."
-]
-
-# Initialize the PorterStemmer
-stemmer = PorterStemmer()
-
-# Tokenize and stem
-for sentence in text_data:
-    print(f"Original Sentence: {sentence}")
-    tokens = word_tokenize(sentence)
-    stemmed_tokens = [stemmer.stem(word) for word in tokens]
-    print(f"Stemmed Tokens: {stemmed_tokens}\n")
-
-
-!!!!pora3:Implement Morphological Analysis
-import nltk
-from nltk.stem import WordNetLemmatizer
-from nltk import pos_tag, word_tokenize
+pratic1:-DDL STATEMENTS
+CREATE database Cinema;
+Use Cinema;
+//CREATE TABLES
+// Query for customers table 
+CREATE TABLE Customers (
+CustId VARCHAR2(50) PRIMARY KEY, 
+Name VARCHAR2(50),
+Contact_no VARCHAR2(50),
+CONSTRAINT chk_contact_no_length CHECK (LENGTH(Contact_no) <= 10)
+);
+CREATE TABLE Movie (
+MovieID VARCHAR(50) PRIMARY KEY, 
+Name VARCHAR(50),
+ActorName VARCHAR(50), 
+ActressName VARCHAR(50), 
+DirectorName VARCHAR(50), 
+ReleaseDate DATE, 
+CountryName VARCHAR(50), 
+Price DECIMAL(9,2)
+);
+CREATE TABLE Screen (
+ScreenID VARCHAR(50) PRIMARY KEY NOT NULL, 
+Name VARCHAR(50),
+MovieID VARCHAR(50),
+Capacity VARCHAR(50),
+CONSTRAINT fk_movie FOREIGN KEY (MovieID) REFERENCES Movie(MovieID)
+)
+//Query for table Tickets 
+CREATE TABLE Tickets(
+TicketID VARCHAR(50) PRIMARY KEY NOT NULL, 
+MovieID VARCHAR(50),
+ScreenID VARCHAR(50),
+Date DATE,
+Price DECIMAL(9,2),
+CONSTRAINT fk_ticket_movie FOREIGN KEY (MovieID) REFERENCES Movie(MovieID), 
+CONSTRAINT fk_ticket_screen FOREIGN KEY (ScreenID) REFERENCES Screen(ScreenID)
+);
+//insert Query for Customer table
+INSERT INTO Customer (CustId, Name, Contact_no) VALUES 
+('C001', 'Rahul Sharma', '9876543210'),
+('C002', 'Priya Singh', '9123456789'),
+('C003', 'Arjun Mehta', '9988776655'),
+('C004', 'Sneha Gupta', '8765432109'),
+('C005', 'Aditi Verma', '9988112233');
+//insert Query for Movie table
+INSERT INTO Movie (MovieID, Name, ActorName, ActressName, DirectorName, ReleaseDate,
+CountryName, Price) VALUES
+('M001', 'Kabir Singh', 'Shahid Kapoor', 'Kiara Advani', 'Sandeep Reddy Vanga', '2019-06-21', 'India', 350.00), 
+('M002', 'Bajrangi Bhaijaan', 'Salman Khan', 'Harshaali Malhotra', 'Kabir Khan', '2015-07-17', 'India', 400.00), 
+('M003', '3 Idiots', 'Aamir Khan', 'Kareena Kapoor', 'Rajkumar Hirani', '2009-12-25', 'India', 300.00), 
+('M004', 'Dangal', 'Aamir Khan', 'Fatima Sana Shaikh', 'Nitesh Tiwari', '2016-12-23', 'India', 450.00), 
+('M005', 'Chennai Express', 'Shah Rukh Khan', 'Deepika Padukone', 'Rohit Shetty', '2013-08-09', 'India', 
+380.00);
+//insert Query for Screen table
+INSERT INTO Screen (ScreenID, Name, MovieID, Capacity) VALUES 
+('S001', 'PVR Juhu', 'M001', '200'),
+('S002', 'Inox Mall', 'M002', '250'),
+('S003', 'Cinepolis', 'M003', '300'),
+('S004', 'SRS Cinemas', 'M004', '150'),
+('S005', 'Big Cinemas', 'M005', '220');
+//insert Query for Tickets table
+INSERT INTO Tickets (TicketID, MovieID, ScreenID, Date, Price) VALUES 
+('T001', 'M001', 'S001', '2023-10-01', 350.00),
+('T002', 'M002', 'S002', '2023-10-02', 400.00),
+('T003', 'M003', 'S003', '2023-10-03', 300.00),
+('T004', 'M004', 'S004', '2023-10-04', 450.00),
+('T005', 'M005', 'S005', '2023-10-05', 380.00);
+//SELECT QUERY TO WATCH THE DATA ENTRY INSIDE THE TABLES
+SELECT * FROM Customers; 
+SELECT * FROM Movie;
+SELECT * FROM Screen; 
+SELECT * FROM TICKETS;
+//Delete Query for Tickets table
+DELETE FROM Tickets;
+
+
+
+@@@praa2:-DML statements joins and queries
+
+CREATE TABLE Patient( 
+Patient_id VARCHAR, 
+Patient_name VARCHAR, 
+Address VARCHAR,
+Age INT,
+Ailment VARCHAR);
+CREATE TABLE Doctor(
+Doc_id VARCHAR, 
+Doc_name VARCHAR, 
+Specialization VARCHAR, 
+Qualification VARCHAR);
+CREATE TABLE Admit(
+Bed_no VARCHAR, 
+Patient_id VARCHAR, 
+Doc_id VARCHAR, 
+Disease VARCHAR, 
+Dt_of_admit DATE, 
+Dt_of_discharge DATE);
+INSERT INTO Patient VALUES
+('P01', 'Santosh', 'Mumbai', 67, 'Heart attack'),
+('P02', 'Rohini', 'Bangalore', 65, 'Stroke'),
+('P03', 'Tilak', 'Mumbai', 54, 'Backache'),
+('P04', 'Rohini', 'Chennai', 34, 'Stomach ache'),
+('P05', 'Riddhi', 'Mumbai', 25, 'Fever'); 
+SELECT * FROM Patient;
+INSERT INTO Doctor VALUES
+('D01', 'Ragini', 'Cardiac', 'MD'),
+('D02', 'Rishav', 'Gynaecology', 'MD'),
+('D03', 'Somnath', 'Cardiac', 'MD'),
+('D04', 'Raghav', 'General', 'MD'),
+('D05', 'Royston', 'General', 'MBBS'); 
+SELECT * FROM Doctor;
+INSERT INTO Admit VALUES
+('B01', 'P01', 'D01', 'Heart related', '22-01-2023', '25-01-2023'),
+('B02', 'P02', 'D01', 'Heart related', '11-02-2024', '12-03-2024'),
+('B03', 'P05', 'D05', 'Dengue', '15-03-2024', '22-03-2024'); 
+SELECT * FROM Admit;
+//2. Print the names of the patients who are treated by Dr. Ragini
+SELECT p.Patient_name 
+FROM Patient p
+JOIN Admit a
+ONp.Patient_id = a.Patient_id 
+JOIN Doctor D
+ON a.Doc_id = d.Doc_id 
+WHERE d.Doc_name = 'Ragini';
+//3. Print the names of the patients who are not admitted
+SELECT Patient_name 
+FROM Patient
+WHERE Patient_id NOT IN 
+(SELECT p.Patient_id 
+FROM Patient p
+JOIN Admit a
+ON p.Patient_id = a.Patient_id);
+//4. Print the details of the doctors who are General physicians.
+SELECT *
+FROM Doctor
+WHERE Specialization = 'General';
+//5. Print the details of the docto who is treating Riddhi
+SELECT d.*
+FROM Doctor d 
+JOIN Admit a
+ONd.Doc_id = a.Doc_id 
+JOIN Patient p
+ON a.Patient_id = p.Patient_id 
+WHERE p.Patient_name = 'Riddhi';
+//6. Update the date_of_discharge for patient P01 to ‘26-01-2023’
+UPDATE Admit
+SETDt_of_discharge = '26-01-2023' 
+WHERE Patient_id = 'P01';
+SELECT * FROM Admit;
+//7. Rename the “Ailment” column of “Patient” table to symptoms.
+ALTER TABLE Patient
+RENAME Ailment TO Symptoms
+//8. Delete the patients records who have not been admitted.
+DELETE
+FROM Patient
+WHERE Patient_id NOT IN 
+(
+SELECT p.Patient_id
+FROM Patient p 
+JOIN Admit a
+ON p.Patient_id = a.Patient_id);
+SELECT * FROM Patient;
+
+
+pra!!!3:-MongoDB basic queries
+// Switch to a database (or create it if it doesn’t exist)
+use database_name
+// Show all collections in the database
+show collections
+// Insert a single document into a collection
+db.collection_name.insertOne({ name: "John", age: 25, city: "Mumbai" })
+
+// Insert multiple documents into a collection
+db.collection_name.insertMany([
+  { name: "Alice", age: 30, city: "Delhi" },
+  { name: "Bob", age: 22, city: "Bangalore" }
+])
+// Find all documents in a collection
+db.collection_name.find()
+
+// Find documents with a condition
+db.collection_name.find({ city: "Mumbai" })
+
+// Find a single document
+db.collection_name.findOne({ name: "Alice" })
+// Update a single document
+db.collection_name.updateOne(
+  { name: "John" },                     // Filter
+  { $set: { age: 26 } }                 // Update operation
+)
+
+// Update multiple documents
+db.collection_name.updateMany(
+  { city: "Delhi" },                    // Filter
+  { $set: { state: "Delhi NCR" } }      // Update operation
+)
+// Delete a single document
+db.collection_name.deleteOne({ name: "Bob" })
+
+// Delete multiple documents
+db.collection_name.deleteMany({ city: "Mumbai" })
+// Count all documents
+db.collection_name.countDocuments()
+
+// Count documents with a condition
+db.collection_name.countDocuments({ city: "Delhi" })
+// Sort by age in ascending order
+db.collection_name.find().sort({ age: 1 })
+
+// Sort by age in descending order
+db.collection_name.find().sort({ age: -1 })
+// Limit to 5 documents
+db.collection_name.find().limit(5)
+db.collection_name.find().sort({ age: -1 }).limit(3)
+// Create an index on the 'name' field
+db.collection_name.createIndex({ name: 1 })
+// Drop a collection
+db.collection_name.drop()
+
+
+
+###pratic4:-Mongodb map reduce and filter queries
 
-# Download necessary resources
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
 
-# Initialize the lemmatizer
-lemmatizer = WordNetLemmatizer()
-
-# Example text
-text = "The children are playing happily in the playground. She was running faster than anyone else."
-
-# Tokenize and POS tagging
-tokens = word_tokenize(text)
-pos_tags = pos_tag(tokens)
-
-# Perform lemmatization with part-of-speech
-for word, pos in pos_tags:
-    lemma = lemmatizer.lemmatize(word.lower())
-    print(f"Word: {word}, POS: {pos}, Lemma: {lemma}")
-
-
-&&&prat4:Implement N-gram Model
-
-# Function to generate N-grams
-def generate_ngrams(text, n):
-    tokens = text.split()  # Tokenize the text
-    ngrams = [tuple(tokens[i:i + n]) for i in range(len(tokens) - n + 1)]
-    return ngrams
-
-# Example text
-text = "Natural language processing is amazing."
-
-# Generate bi-grams (N = 2)
-bigrams = generate_ngrams(text, 2)
-print("Bi-grams:", bigrams)
-
-# Generate tri-grams (N = 3)
-trigrams = generate_ngrams(text, 3)
-print("Tri-grams:", trigrams)
-
-
-####pra5:Implement Part-of-Speech tagging
-import nltk
-
-# Download required NLTK data files
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-
-# Example text
-text = "Natural Language Processing is an amazing field of study."
-
-# Tokenize the text into words
-tokens = nltk.word_tokenize(text)
-
-# Perform POS tagging
-pos_tags = nltk.pos_tag(tokens)
-
-# Display the results
-print("Word and POS Tag:")
-for word, tag in pos_tags:
-    print(f"{word}: {tag}")
-
-
-&&&pta6:Implement Chucking
-
-import nltk
-
-# Download required NLTK data
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-
-# Example text
-text = "The quick brown fox jumps over the lazy dog."
-
-# Tokenize and tag the text
-tokens = nltk.word_tokenize(text)
-pos_tags = nltk.pos_tag(tokens)
-
-# Define a chunk grammar
-# This example captures noun phrases (NP) using POS tags (e.g., DT + JJ + NN)
-chunk_grammar = r"""
-  NP: {<DT>?<JJ>*<NN>}   # NP: Determiner (optional), Adjective(s), and Noun
-"""
-
-# Create a chunk parser
-chunk_parser = nltk.RegexpParser(chunk_grammar)
-
-# Parse the tagged text
-chunk_tree = chunk_parser.parse(pos_tags)
-
-# Display the chunk tree
-print(chunk_tree)
-chunk_tree.draw()  # Opens a graphical display of the tree (if supported)
-
-
-$$$pra7:-mplement Text Summarization
-
-# Install necessary library
-# pip install transformers
-
-from transformers import pipeline
-
-# Load a pre-trained summarization pipeline
-summarizer = pipeline("summarization")
-
-# Example text
-text = """
-Natural Language Processing (NLP) is a fascinating field of Artificial Intelligence (AI) 
-that enables computers to understand and interpret human language. Applications of NLP include 
-sentiment analysis, machine translation, chatbots, and more. By leveraging techniques like text summarization, 
-NLP systems can distill vast amounts of information into concise summaries, making it easier for users to process and understand data.
-"""
-
-# Summarize the text
-summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
-print("Abstractive Summary:")
-print(summary[0]['summary_text'])
-
-
-****prat8:-Implement Named Entity Recognition
-
-import spacy
-
-# Load the spaCy English language model
-nlp = spacy.load("en_core_web_sm")
-
-# Example text
-text = """
-Elon Musk, the CEO of SpaceX and Tesla, announced the launch of the Starship rocket from Boca Chica, Texas, 
-on February 10, 2025. The launch is expected to revolutionize space travel.
-"""
-
-# Process the text using spaCy
-doc = nlp(text)
-
-# Extract named entities
-print("Named Entities and Their Categories:")
-for ent in doc.ents:
-    print(f"{ent.text} ({ent.label_})")
-
-# Explanation of entities
-print("\nEntity Labels and Their Meanings:")
-print(spacy.explain("ORG"))  # Example
-print(spacy.explain("DATE"))  # Example
-
-
-
-^^^^pra9:-Implement Sentiment Analysis 
-
-from nltk.sentiment import SentimentIntensityAnalyzer
-import nltk
-
-# Download the SentimentIntensityAnalyzer
-nltk.download('vader_lexicon')
-
-# Initialize the sentiment analyzer
-sia = SentimentIntensityAnalyzer()
-
-# Example text
-texts = [
-    "I love this product! It's amazing and works perfectly.",
-    "This is the worst experience I've ever had.",
-    "The product is okay, but it could be better.",
-]
-
-# Analyze sentiment for each text
-for text in texts:
-    scores = sia.polarity_scores(text)
-    print(f"Text: {text}")
-    print(f"Sentiment Scores: {scores}")
-    if scores['compound'] > 0:
-        print("Overall Sentiment: Positive")
-    elif scores['compound'] < 0:
-        print("Overall Sentiment: Negative")
-    else:
-        print("Overall Sentiment: Neutral")
-    print("-" * 50)
-
-
-()($$pra10:-Implement One real time NLP Application on a dataset available
-
-pip install wordcloud
-import pandas as pd
-from collections import Counter 
-import matplotlib.pyplot as plt 
-from wordcloud import WordCloud
-# Load the CSV file (replace 'your_file.csv' with the actual 
-filename)
-df = pd.read_csv('C:/Users/mera/Downloads/TestLarge.csv')
-# Ensure the required columns are present
-if 'Review' not in df.columns or 'Sentiment' not in 
-df.columns:
-raise ValueError("Columns 'review' or 'sentiment' not 
-found in the CSV. Please check your file.")
-# --- 1. Sentiment Distribution ---
-sentiment_counts = df['Sentiment'].value_counts()
-47
-print("Sentiment Distribution:") 
-print(sentiment_counts)
-# Plot Sentiment Distribution
-sentiment_counts.plot(kind='bar', color=['green', 'red', 
-'blue'])
-plt.title('Sentiment Distribution') 
-plt.xlabel('Sentiment') 
-plt.ylabel('Count') 
-plt.xticks(rotation=0)
-plt.show()
-# --- 2. Word Frequency Analysis by Sentiment ---
-# Function to clean and tokenize text
-def clean_text(text): 
-text = text.lower() 
-words = text.split() 
-return words
-# Separate reviews by sentiment
-positive_reviews = df[df['Sentiment'] == 'Positive']['Review'] 
-negative_reviews = df[df['Sentiment'] == 'Negative']['Review'] 
-neutral_reviews = df[df['Sentiment'] == 'Neutral']['Review']
-# Combine all reviews by sentiment
-positive_words = sum(positive_reviews.apply(clean_text), []) 
-negative_words = sum(negative_reviews.apply(clean_text), []) 
-neutral_words = sum(neutral_reviews.apply(clean_text), [])
-# Get word frequency counts 
-positive_word_counts = Counter(positive_words)
-48
-negative_word_counts = Counter(negative_words) 
-neutral_word_counts = Counter(neutral_words)
-# Display most common words for each sentiment 
-print("\nMost Common Words in Positive Sentiments:") 
-print(positive_word_counts.most_common(10))
-print("\nMost Common Words in Negative Sentiments:") 
-print(negative_word_counts.most_common(10))
-print("\nMost Common Words in Neutral Sentiments:") 
-print(neutral_word_counts.most_common(10))
-# --- 3. Word Cloud for Positive Sentiment ---
-positive_wordcloud = WordCloud(width=800, height=400, 
-background_color='white').generate_from_frequencies(positive_w 
-ord_counts)
-plt.figure(figsize=(8, 8)) 
-plt.imshow(positive_wordcloud, interpolation='bilinear') 
-plt.title('Word Cloud for Positive Sentiment') 
-plt.axis('off')
-plt.show()
-# --- 4. Word Cloud for Negative Sentiment ---
-negative_wordcloud = WordCloud(width=800, height=400, 
-background_color='white').generate_from_frequencies(negative_w 
-ord_counts)
-plt.figure(figsize=(8, 8)) 
-plt.imshow(negative_wordcloud, interpolation='bilinear') 
-plt.title('Word Cloud for Negative Sentiment') 
-plt.axis('off')
-plt.show()
-49
-# --- 5. Optional: Sentiment Over Time (if a timestamp column 
-exists) ---
-if 'timestamp' in df.columns:
-# Convert timestamp to datetime
-df['timestamp'] = pd.to_datetime(df['timestamp'])
-# Group by sentiment and timestamp 
-sentiment_time_series =
-df.groupby([df['timestamp'].dt.to_period('M'),
-'Sentiment']).size().unstack().fillna(0)
-sentiment_time_series.plot(kind='line', marker='o') 
-plt.title('Sentiment Over Time')
-plt.xlabel('Time (Month-Year)') 
-plt.ylabel('Count') 
-plt.xticks(rotation=45) 
-plt.show()
-else:
-print("No timestamp column found for sentiment over time 
-analysis.")
 
 
 
